@@ -1,0 +1,46 @@
+{
+  "app_name": "Hisaab",
+  "tagline": "Dosti ka hisaab saaf rakhein.",
+  "spent_today": "Aaj ka kharcha",
+  "add_expense": "Kharcha add karo",
+  "save_expense": "Kharcha save karo",
+  "people_owe_you": "Doston se lene hain",
+  "you_owe": "Aapko dene hain",
+  "split_preview": "{{name}} tumhe {{amount}} dega",
+  "personal_spend_note": "Personal spend sirf aapka hissa count karta hai.",
+  "fresh_page_title": "Aaj ka page khali hai.",
+  "fresh_page_subtitle": "Kuch log nahi kiya. Naya hisaab shuru karein.",
+  "settle_up": "Hisaab settle karo",
+  "remind": "Yaad dilao",
+  "undo": "Undo",
+  "expense_added": "Kharcha add ho gaya",
+  "categories": {
+    "food": "Khana aur Snacks",
+    "chai": "Chai aur Coffee",
+    "transport": "Metro / Auto",
+    "study": "Kitabein aur Padhai",
+    "shopping": "Shopping",
+    "rent": "Hostel / Room Rent",
+    "entertainment": "Movies aur Outing",
+    "other": "Other"
+  },
+  "nav": {
+    "home": "Home",
+    "people": "Dost",
+    "reports": "Reports",
+    "history": "History",
+    "settings": "Settings"
+  },
+  "subtexts": {
+    "personal_split_count": "{{personalCount}} personal · {{splitCount}} split",
+    "friends_pending": "{{friendCount}} doston se · {{pendingCount}} pending",
+    "owing_to_friends": "{{friends}} ko"
+  },
+  "recent_activity": "Recent Activity",
+  "view_all": "Sab dekhein",
+  "night_review_title": "Raat ka Review",
+  "night_review_subtitle": "30 seconds mein aaj ka hisaab wrap karo.",
+  "review_btn": "Review",
+  "offline_banner": "Offline mode on hai. Data locally save ho raha hai aur internet aane par sync ho jayega.",
+  "no_expenses_today": "Aaj koi kharcha nahi likha gaya"
+}

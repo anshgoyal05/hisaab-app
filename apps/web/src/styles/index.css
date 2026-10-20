@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Daylight paper (LIGHT) */
+  --color-canvas: #F7F6EF;
+  --color-surface: #FFFEFA;
+  --color-text-primary: #203D37;
+  --color-text-secondary: #61726B;
+  --color-action-primary: #145C53;
+  --color-action-primary-hover: #0F4740;
+  --color-balance-owed-to-me: #246E49;
+  --color-balance-owed-surface: #EAF5EE;
+  --color-balance-i-owe: #AA483C;
+  --color-balance-i-owe-surface: #FDF1EF;
+  --color-border-rule: #DCE3DB;
+}
+
+.dark {
+  /* After-hours ink (DARK) */
+  --color-canvas: #102622;
+  --color-surface: #1C3630;
+  --color-text-primary: #EDF4EC;
+  --color-text-secondary: #8BCAB0;
+  --color-action-primary: #A8D8C4;
+  --color-action-primary-hover: #93C9B3;
+  --color-balance-owed-to-me: #A9DBAE;
+  --color-balance-owed-surface: #173F30;
+  --color-balance-i-owe: #FFB6A5;
+  --color-balance-i-owe-surface: #3D2422;
+  --color-border-rule: #496056;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-canvas);
+  color: var(--color-text-primary);
+  font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* Devanagari / Hindi rule: 1.65 line height prevents clipped matras */
+:lang(hi),
+.font-hindi {
+  line-height: 1.65 !important;
+}
+
+/* Touch target minimum 44px rule */
+button,
+input,
+select,
+[role='button'] {
+  min-height: 44px;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-rule);
+  border-radius: 9999px;
+}

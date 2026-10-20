@@ -1,0 +1,46 @@
+{
+  "app_name": "हिसाब",
+  "tagline": "छोटे खर्च लिखें, दोस्ती का हिसाब साफ़ रखें।",
+  "spent_today": "आज का खर्च",
+  "add_expense": "खर्च जोड़ें",
+  "save_expense": "खर्च सहेजें",
+  "people_owe_you": "आपको मिलने हैं",
+  "you_owe": "आपको देने हैं",
+  "split_preview": "{{name}} आपको {{amount}} देगा",
+  "personal_spend_note": "आपका खर्च केवल आपका हिस्सा गिनता है।",
+  "fresh_page_title": "आज का पन्ना खाली है।",
+  "fresh_page_subtitle": "कोई खर्च नहीं लिखा। आज की शुरुआत करें।",
+  "settle_up": "हिसाब चुकता करें",
+  "remind": "याद दिलाएं",
+  "undo": "पूर्ववत करें",
+  "expense_added": "खर्च दर्ज हो गया",
+  "categories": {
+    "food": "खाना और नाश्ता",
+    "chai": "चाय और कॉफ़ी",
+    "transport": "किराया / मेट्रो",
+    "study": "किताबें और पढ़ाई",
+    "shopping": "खरीदारी",
+    "rent": "कमरा / हॉस्टल किराया",
+    "entertainment": "मनोरंजन और सिनेमा",
+    "other": "अन्य"
+  },
+  "nav": {
+    "home": "होम",
+    "people": "दोस्त",
+    "reports": "रिपोर्ट",
+    "history": "इतिहास",
+    "settings": "सेटिंग्स"
+  },
+  "subtexts": {
+    "personal_split_count": "{{personalCount}} निजी · {{splitCount}} साझा",
+    "friends_pending": "{{friendCount}} दोस्तों से · {{pendingCount}} बाकी",
+    "owing_to_friends": "{{friends}} को"
+  },
+  "recent_activity": "हाल की गतिविधि",
+  "view_all": "सब देखें",
+  "night_review_title": "रात का रिव्यू",
+  "night_review_subtitle": "30 सेकंड में आज का हिसाब पूरा करें।",
+  "review_btn": "रिव्यू",
+  "offline_banner": "ऑफ़लाइन मोड सक्रिय। खर्च स्थानीय रूप से सहेजे गए हैं और ऑनलाइन आने पर सिंक होंगे।",
+  "no_expenses_today": "आज कोई खर्च दर्ज नहीं किया गया"
+}

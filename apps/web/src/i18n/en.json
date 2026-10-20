@@ -1,0 +1,46 @@
+{
+  "app_name": "Hisaab",
+  "tagline": "Calm money. Clear friendships.",
+  "spent_today": "Spent today",
+  "add_expense": "Add expense",
+  "save_expense": "Save expense",
+  "people_owe_you": "People owe you",
+  "you_owe": "You owe",
+  "split_preview": "{{name}} will owe you {{amount}}",
+  "personal_spend_note": "Personal spend counts only your share of a split.",
+  "fresh_page_title": "A fresh page for today.",
+  "fresh_page_subtitle": "Nothing logged yet. Start a clean slate for the day.",
+  "settle_up": "Settle up",
+  "remind": "Remind",
+  "undo": "Undo",
+  "expense_added": "Expense added",
+  "categories": {
+    "food": "Food & Snacks",
+    "chai": "Chai & Coffee",
+    "transport": "Transport / Metro",
+    "study": "Books & Study",
+    "shopping": "Shopping",
+    "rent": "Hostel / Rent",
+    "entertainment": "Movies & Outings",
+    "other": "Other"
+  },
+  "nav": {
+    "home": "Home",
+    "people": "People",
+    "reports": "Reports",
+    "history": "History",
+    "settings": "Settings"
+  },
+  "subtexts": {
+    "personal_split_count": "{{personalCount}} personal · {{splitCount}} split",
+    "friends_pending": "across {{friendCount}} friends · {{pendingCount}} pending",
+    "owing_to_friends": "to {{friends}}"
+  },
+  "recent_activity": "Recent Activity",
+  "view_all": "View all",
+  "night_review_title": "Nightly Review",
+  "night_review_subtitle": "Wrap up today's spending in 30 seconds.",
+  "review_btn": "Review",
+  "offline_banner": "Offline mode active. Expenses are saved locally and sync automatically when connected.",
+  "no_expenses_today": "No expenses recorded yet today"
+}

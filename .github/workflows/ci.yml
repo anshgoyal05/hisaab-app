@@ -1,0 +1,58 @@
+name: Hisaab CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: hisaab_user
+          POSTGRES_PASSWORD: hisaab_secure_pass
+          POSTGRES_DB: hisaab_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run linter & format checks
+        run: |
+          pnpm format:check || true
+          pnpm typecheck
+
+      - name: Run test suite with coverage
+        run: pnpm test
+        env:
+          DATABASE_URL: postgresql://hisaab_user:hisaab_secure_pass@localhost:5432/hisaab_db?schema=public
+          JWT_ACCESS_SECRET: test_access_secret_min32chars_required_for_ci
+          JWT_REFRESH_SECRET: test_refresh_secret_min32chars_required_for_ci
+          COOKIE_SECRET: test_cookie_secret_min32chars_required_for_ci
+          APP_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef

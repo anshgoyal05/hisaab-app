@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: hisaab_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: hisaab_user
+      POSTGRES_PASSWORD: hisaab_secure_pass
+      POSTGRES_DB: hisaab_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U hisaab_user -d hisaab_db']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: hisaab_api
+    restart: always
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://hisaab_user:hisaab_secure_pass@postgres:5432/hisaab_db?schema=public
+      PORT: 4000
+      NODE_ENV: production
+      API_HOST: 0.0.0.0
+      CORS_ORIGIN: http://localhost:5173
+      JWT_ACCESS_SECRET: dev_access_jwt_secret_change_in_production_min32chars
+      JWT_REFRESH_SECRET: dev_refresh_jwt_secret_change_in_production_min32chars
+      COOKIE_SECRET: dev_cookie_secret_change_in_production_min32chars
+      APP_MASTER_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+    ports:
+      - '4000:4000'
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: hisaab_web
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - '5173:80'
+
+volumes:
+  postgres_data:

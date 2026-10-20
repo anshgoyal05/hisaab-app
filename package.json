@@ -1,0 +1,29 @@
+{
+  "name": "hisaab-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Personal expense tracker and shared ledger for Indian college students",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "seed": "pnpm --filter \"@hisaab/api\" db:seed",
+    "build": "pnpm --filter \"@hisaab/shared\" build && pnpm --filter \"./apps/*\" build",
+    "test": "pnpm --recursive test",
+    "test:e2e": "playwright test",
+    "test:coverage": "pnpm --recursive test:coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "pnpm --recursive typecheck",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,css,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,css,md}\""
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^22.10.1",
+    "playwright": "^1.64.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2"
+  }
+}

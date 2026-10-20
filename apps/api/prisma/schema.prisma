@@ -1,0 +1,212 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                   String             @id @default(uuid()) @db.Uuid
+  email                String             @unique @db.VarChar(255)
+  passwordHash         String             @map("password_hash")
+  dekEncrypted         String             @map("dek_encrypted") // Data Encryption Key wrapped by master KEK
+  isVerified           Boolean            @default(false) @map("is_verified")
+  twoFactorSecretEnc   String?            @map("two_factor_secret_enc")
+  twoFactorEnabled     Boolean            @default(false) @map("two_factor_enabled")
+  createdAt            DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt            DateTime?          @map("deleted_at") @db.Timestamptz(6)
+
+  settings             UserSettings?
+  people               Person[]
+  categories           Category[]
+  transactions         Transaction[]
+  settlements          Settlement[]
+  budgets              Budget[]
+  refreshTokens        RefreshToken[]
+  pushSubscriptions    PushSubscription[]
+  auditLogs            AuditLog[]
+
+  @@map("users")
+}
+
+model UserSettings {
+  userId          String   @id @map("user_id") @db.Uuid
+  language        String   @default("en") @db.VarChar(10) // 'en' | 'hi' | 'hinglish'
+  currency        String   @default("INR") @db.VarChar(3)
+  theme           String   @default("system") @db.VarChar(10) // 'light' | 'dark' | 'system'
+  reminderTime    String   @default("21:30") @map("reminder_time") @db.VarChar(5)
+  reminderEnabled Boolean  @default(true) @map("reminder_enabled")
+  pinHash         String?  @map("pin_hash")
+  pinEnabled      Boolean  @default(false) @map("pin_enabled")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("user_settings")
+}
+
+model Person {
+  id           String             @id @default(uuid()) @db.Uuid
+  userId       String             @map("user_id") @db.Uuid
+  nameEnc      String             @map("name_enc") // Encrypted name
+  phoneEnc     String?            @map("phone_enc") // Encrypted phone
+  notesEnc     String?            @map("notes_enc") // Encrypted notes
+  avatarColor  String             @default("#145C53") @map("avatar_color") @db.VarChar(16)
+  createdAt    DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  deletedAt    DateTime?          @map("deleted_at") @db.Timestamptz(6)
+
+  user         User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  splits       TransactionSplit[]
+  settlements  Settlement[]
+  payerTransactions Transaction[]  @relation("PayerPerson")
+
+  @@index([userId, deletedAt])
+  @@map("people")
+}
+
+model Category {
+  id           String        @id @default(uuid()) @db.Uuid
+  userId       String?       @map("user_id") @db.Uuid // null for default global categories
+  name         String        @db.VarChar(64)
+  icon         String        @db.VarChar(32)
+  color        String        @db.VarChar(16)
+  isDefault    Boolean       @default(false) @map("is_default")
+  createdAt    DateTime      @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  budgets      Budget[]
+
+  @@index([userId, isDefault])
+  @@map("categories")
+}
+
+model Transaction {
+  id            String             @id @default(uuid()) @db.Uuid
+  clientId      String             @map("client_id") @db.Uuid
+  userId        String             @map("user_id") @db.Uuid
+  type          String             @db.VarChar(32) // personal, split, i_paid_for_someone, someone_paid_for_me
+  payerType     String             @map("payer_type") @db.VarChar(10) // 'me' | 'person'
+  payerPersonId String?            @map("payer_person_id") @db.Uuid
+  totalMinor    BigInt             @map("total_minor")
+  currency      String             @default("INR") @db.VarChar(3)
+  categoryId    String             @map("category_id") @db.Uuid
+  paymentMethod String             @map("payment_method") @db.VarChar(20)
+  occurredOn    DateTime           @map("occurred_on") @db.Date
+  noteEnc       String?            @map("note_enc")
+  splitMode     String?            @map("split_mode") @db.VarChar(20)
+  version       Int                @default(1)
+  createdAt     DateTime           @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt     DateTime?          @map("deleted_at") @db.Timestamptz(6)
+
+  user          User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category      Category           @relation(fields: [categoryId], references: [id])
+  payerPerson   Person?            @relation("PayerPerson", fields: [payerPersonId], references: [id])
+  splits        TransactionSplit[]
+
+  @@unique([userId, clientId])
+  @@index([userId, occurredOn(sort: Desc)])
+  @@index([userId, categoryId])
+  @@index([userId, deletedAt])
+  @@map("transactions")
+}
+
+model TransactionSplit {
+  id              String      @id @default(uuid()) @db.Uuid
+  transactionId   String      @map("transaction_id") @db.Uuid
+  participantType String      @map("participant_type") @db.VarChar(10) // 'me' | 'person'
+  personId        String?     @map("person_id") @db.Uuid
+  shareMinor      BigInt      @map("share_minor")
+
+  transaction     Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+  person          Person?     @relation(fields: [personId], references: [id])
+
+  @@index([transactionId])
+  @@index([personId])
+  @@map("transaction_splits")
+}
+
+model Settlement {
+  id            String    @id @default(uuid()) @db.Uuid
+  clientId      String    @map("client_id") @db.Uuid
+  userId        String    @map("user_id") @db.Uuid
+  personId      String    @map("person_id") @db.Uuid
+  direction     String    @db.VarChar(20) // they_paid_me | i_paid_them
+  amountMinor   BigInt    @map("amount_minor")
+  paymentMethod String    @map("payment_method") @db.VarChar(20)
+  settledOn     DateTime  @map("settled_on") @db.Date
+  noteEnc       String?   @map("note_enc")
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  deletedAt     DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  person        Person    @relation(fields: [personId], references: [id])
+
+  @@index([userId, personId])
+  @@index([userId, settledOn(sort: Desc)])
+  @@map("settlements")
+}
+
+model Budget {
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  categoryId  String?   @map("category_id") @db.Uuid
+  month       String    @db.VarChar(7) // YYYY-MM
+  limitMinor  BigInt    @map("limit_minor")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category    Category? @relation(fields: [categoryId], references: [id])
+
+  @@unique([userId, month, categoryId])
+  @@map("budgets")
+}
+
+model AuditLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
+  entityType  String   @map("entity_type") @db.VarChar(32)
+  entityId    String   @map("entity_id") @db.Uuid
+  action      String   @db.VarChar(16) // CREATE | UPDATE | SOFT_DELETE
+  version     Int      @default(1)
+  diffSummary String   @map("diff_summary") // Redacted summary, zero PII or plaintext notes
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, entityType, entityId])
+  @@map("audit_log")
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  tokenHash  String   @unique @map("token_hash")
+  familyId   String   @map("family_id") @db.Uuid
+  isRevoked  Boolean  @default(false) @map("is_revoked")
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([familyId])
+  @@map("refresh_tokens")
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_subscriptions")
+}
